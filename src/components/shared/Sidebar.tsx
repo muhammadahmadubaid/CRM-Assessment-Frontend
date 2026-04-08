@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { Building2, LogOut, Users, UsersRound } from 'lucide-react';
+import { useQueryClient } from '@tanstack/react-query';
 import { authApi } from '@/lib/api/auth.api';
 import { Avatar } from './Avatar';
 import { useEffect, useState } from 'react';
@@ -12,6 +13,7 @@ import { cn } from '@/lib/utils';
 export function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
@@ -20,6 +22,8 @@ export function Sidebar() {
 
   const logout = () => {
     authApi.logout();
+    // Wipe React Query cache so the next user can't see the previous user's data.
+    queryClient.clear();
     router.push('/login');
   };
 

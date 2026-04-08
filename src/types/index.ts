@@ -65,6 +65,7 @@ export interface CustomerQueryParams {
   page?: number;
   limit?: number;
   search?: string;
+  deleted?: boolean;
 }
 
 export interface LoginResponse {

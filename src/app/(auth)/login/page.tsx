@@ -3,12 +3,14 @@
 import { useState, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { Building2 } from 'lucide-react';
+import { useQueryClient } from '@tanstack/react-query';
 import { authApi } from '@/lib/api/auth.api';
 import { ErrorMessage } from '@/components/shared/ErrorMessage';
 import { Loader2 } from 'lucide-react';
 
 export default function LoginPage() {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [email, setEmail] = useState('alice@techcorp.com');
   const [password, setPassword] = useState('password123');
   const [loading, setLoading] = useState(false);
@@ -20,6 +22,9 @@ export default function LoginPage() {
     setLoading(true);
     try {
       await authApi.login(email, password);
+      // Defensive: wipe any cache left over from a previous session in this tab
+      // before navigating into the app.
+      queryClient.clear();
       router.push('/customers');
     } catch (err: unknown) {
       const e = err as { response?: { data?: { message?: string } } };

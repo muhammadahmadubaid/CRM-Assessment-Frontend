@@ -57,6 +57,18 @@ export const useDeleteCustomer = () => {
   });
 };
 
+export const useRestoreCustomer = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => customersApi.restore(id),
+    onSuccess: (_, id) => {
+      qc.invalidateQueries({ queryKey: ['customers'] });
+      qc.invalidateQueries({ queryKey: ['customer', id] });
+      qc.invalidateQueries({ queryKey: ['customer', id, 'activity'] });
+    },
+  });
+};
+
 export const useAssignCustomer = () => {
   const qc = useQueryClient();
   return useMutation({
